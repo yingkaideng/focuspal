@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusPal — Maybe you're not lazy.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,600;1,400&display=swap');
+
+  :root {
+    --green:     #2D7A4F;
+    --green-mid: #4CAF50;
+    --green-lt:  #E8F5EC;
+    --green-soft:#D1EDD8;
+    --purple:    #6C63FF;
+    --purple-lt: #EDE8FF;
+    --amber:     #F59E0B;
+    --amber-lt:  #FFF8E1;
+    --rose:      #F43F5E;
+    --rose-lt:   #FFE8EF;
+    --ink:       #1A2E22;
+    --ink-mid:   #3D5245;
+    --muted:     #6B7B72;
+    --border:    #E2EBE5;
+    --bg:        #F7FAF8;
+    --white:     #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,250,248,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 17px; color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 32px; height: 32px;
+    background: var(--green-mid);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .nav-sub { font-size: 10px; font-weight: 600; color: var(--green-mid); letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-top: -2px; }
+  .nav-cta {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #23623E; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: center;
+    padding: 80px 5vw 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-left { padding-right: 60px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-lt);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green-mid);
+    border-radius: 50%;
+  }
+  .hero-h1 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 600;
+    line-height: 1.08;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+  .hero-h1 em {
+    font-style: italic;
+    color: var(--green-mid);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 440px;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--green);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #23623E; transform: translateY(-1px); }
+  .btn-primary img { width: 20px; height: 20px; }
+  .btn-ghost-link {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .btn-ghost-link:hover { color: var(--green); }
+  .hero-trust {
+    margin-top: 28px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .hero-trust svg { color: var(--green-mid); }
+
+  /* ── WIDGET MOCKUP ── */
+  .hero-right { display: flex; justify-content: center; }
+  .widget-wrap {
+    position: relative;
+    width: 320px;
+  }
+  .widget-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -30px;
+    background: radial-gradient(ellipse at center, rgba(76,175,80,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  .widget {
+    position: relative; z-index: 1;
+    background: var(--white);
+    border-top: 4px solid var(--green-mid);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+    padding: 24px 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  .widget-title {
+    font-size: 16px; font-weight: 800; color: var(--ink);
+    text-align: center; margin-bottom: 18px;
+  }
+  .widget-face {
+    width: 52px; height: 52px;
+    background: var(--green-lt);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .widget-q {
+    font-size: 14px; color: var(--ink-mid); text-align: center;
+    margin-bottom: 18px; font-weight: 500;
+  }
+  .widget-btns { display: flex; gap: 8px; margin-bottom: 20px; }
+  .wb-yes {
+    flex: 1; background: var(--green); color: #fff;
+    border: none; padding: 11px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .wb-no {
+    flex: 1; background: #F1F5F2; color: var(--ink-mid);
+    border: none; padding: 11px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .widget-steps { display: flex; flex-direction: column; gap: 8px; }
+  .ws {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 11px 12px; border-radius: 10px;
+  }
+  .ws-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+  }
+  .ws-body {}
+  .ws-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
+  .ws-desc  { font-size: 12px; color: var(--ink-mid); line-height: 1.4; }
+  .ws-quote { font-size: 11px; font-style: italic; color: var(--muted); margin-top: 3px; }
+  .ws.green  { background: var(--green-lt);  }
+  .ws.purple { background: var(--purple-lt); }
+  .ws.amber  { background: var(--amber-lt);  }
+  .ws.rose   { background: var(--rose-lt);   }
+  .ws.green  .ws-num { background: var(--green);  color: #fff; }
+  .ws.purple .ws-num { background: var(--purple);  color: #fff; }
+  .ws.amber  .ws-num { background: var(--amber);   color: #fff; }
+  .ws.rose   .ws-num { background: var(--rose);    color: #fff; }
+  .ws.green  .ws-label { color: var(--green); }
+  .ws.purple .ws-label { color: var(--purple); }
+  .ws.amber  .ws-label { color: #B45309; }
+  .ws.rose   .ws-label { color: var(--rose); }
+  .widget-footer {
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 12px; color: var(--green); font-weight: 600;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 5vw;
+  }
+  .section-eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--green-mid);
+    margin-bottom: 12px;
+  }
+  .section-h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(30px, 3.5vw, 46px);
+    font-weight: 600; color: var(--ink);
+    margin-bottom: 16px; line-height: 1.15;
+  }
+  .section-sub {
+    font-size: 16px; color: var(--muted);
+    max-width: 520px; line-height: 1.6; margin-bottom: 56px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .step-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .step-card::before {
+    content: attr(data-num);
+    position: absolute; top: 18px; right: 18px;
+    font-size: 11px; font-weight: 800; color: var(--border);
+    letter-spacing: 1px;
+  }
+  .step-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 16px;
+  }
+  .step-card h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .step-card p  { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .step-card.c1 .step-icon { background: var(--green-lt); }
+  .step-card.c2 .step-icon { background: var(--purple-lt); }
+  .step-card.c3 .step-icon { background: var(--amber-lt); }
+  .step-card.c4 .step-icon { background: var(--rose-lt); }
+
+  /* ── THERAPIES ── */
+  .therapies-bg {
+    background: linear-gradient(135deg, #F0FAF3 0%, #EEF0FF 100%);
+    padding: 80px 5vw;
+  }
+  .therapies-inner { max-width: 1100px; margin: 0 auto; }
+  .therapies-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .therapy-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+  .therapy-emoji {
+    font-size: 30px; flex-shrink: 0;
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .therapy-card h3 { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .therapy-card .tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;
+  }
+  .therapy-card p { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+  .t1 .therapy-emoji { background: #E8F5EC; }
+  .t2 .therapy-emoji { background: #FFF0F5; }
+  .t3 .therapy-emoji { background: #E0F2F1; }
+  .t4 .therapy-emoji { background: #ECEFF1; }
+  .t1 .tag { background: #E8F5EC; color: var(--green); }
+  .t2 .tag { background: #FFF0F5; color: #AD1457; }
+  .t3 .tag { background: #E0F2F1; color: #00695C; }
+  .t4 .tag { background: #ECEFF1; color: #455A64; }
+
+  /* ── RESEARCH BADGE ── */
+  .research-strip {
+    background: var(--ink);
+    color: #fff;
+    padding: 56px 5vw;
+    text-align: center;
+  }
+  .research-strip h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .research-strip p {
+    font-size: 16px; color: rgba(255,255,255,0.65);
+    max-width: 560px; margin: 0 auto 32px; line-height: 1.6;
+  }
+  .research-pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    padding: 7px 16px; border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+  }
+
+  /* ── PRIVACY ── */
+  .privacy-section {
+    max-width: 1100px; margin: 0 auto; padding: 80px 5vw;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  }
+  .privacy-section h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(28px, 3vw, 42px); font-weight: 600;
+    color: var(--ink); margin-bottom: 16px; line-height: 1.2;
+  }
+  .privacy-section p { font-size: 16px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; }
+  .privacy-checks { display: flex; flex-direction: column; gap: 12px; }
+  .check-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 14px; color: var(--ink-mid);
+  }
+  .check-item::before {
+    content: '✓';
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green-lt); color: var(--green);
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .privacy-visual {
+    background: var(--green-lt);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+  }
+  .privacy-visual .big-icon { font-size: 64px; margin-bottom: 16px; }
+  .privacy-visual p { font-size: 15px; color: var(--green); font-weight: 600; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: linear-gradient(135deg, var(--green) 0%, #1A4D30 100%);
+    padding: 100px 5vw;
+    text-align: center;
+    color: #fff;
+  }
+  .cta-section h2 {
+    font-family: 'Lora', Georgia, serif;
+    font-size: clamp(32px, 4vw, 54px);
+    font-weight: 600; margin-bottom: 16px; line-height: 1.1;
+  }
+  .cta-section p {
+    font-size: 17px; color: rgba(255,255,255,0.75);
+    max-width: 480px; margin: 0 auto 36px; line-height: 1.6;
+  }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; color: var(--green);
+    padding: 15px 28px; border-radius: 12px;
+    font-size: 15px; font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
+  .cta-note { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    padding: 32px 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; flex-wrap: wrap; gap: 12px;
+  }
+  footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  footer a:hover { color: #fff; }
+  .footer-links { display: flex; gap: 20px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding: 60px 5vw; }
+    .hero-left { padding-right: 0; margin-bottom: 48px; }
+    .hero-right { justify-content: flex-start; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .therapies-grid { grid-template-columns: 1fr; }
+    .privacy-section { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 540px) {
+    .steps-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">💚</div>
+    <div>
+      FocusPal
+      <span class="nav-sub">Emotional Insight</span>
+    </div>
+  </a>
+  <a href="https://chromewebstore.google.com" class="nav-cta" target="_blank">Add to Chrome — Free</a>
+</nav>
+
+<!-- HERO -->
+<section style="background: var(--white); border-bottom: 1px solid var(--border);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Chrome Extension · Free</div>
+      <h1 class="hero-h1">
+        Maybe you're<br>
+        <em>not lazy.</em>
+      </h1>
+      <p class="hero-sub">
+        Discover what's really blocking you. FocusPal appears when you pause, helps you understand the feeling underneath the stuck, and guides you back — gently.
+      </p>
+      <div class="hero-actions">
+        <a href="https://chromewebstore.google.com" class="btn-primary" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 7a5 5 0 100 10A5 5 0 0012 7z" fill="#4CAF50"/></svg>
+          Add to Chrome
+        </a>
+        <a href="#how" class="btn-ghost-link">See how it works →</a>
+      </div>
+      <div class="hero-trust">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7l-9-5z"/></svg>
+        Private &amp; secure — your reflections stay on your device
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="widget-wrap">
+        <div class="widget">
+          <div class="widget-title">FocusPal</div>
+          <div class="widget-face">😌</div>
+          <div class="widget-q">Is anything stopping you right now?</div>
+          <div class="widget-btns">
+            <button class="wb-yes">Yes, let's check in</button>
+            <button class="wb-no">No, just resting</button>
+          </div>
+          <div class="widget-steps">
+            <div class="ws green">
+              <div class="ws-num">1</div>
+              <div class="ws-body">
+                <div class="ws-label">Check-In</div>
+                <div class="ws-desc">What's making this moment hard?</div>
+                <div class="ws-quote">"I need to work, but I just can't start."</div>
+              </div>
+            </div>
+            <div class="ws purple">
+              <div class="ws-num">2</div>
+              <div class="ws-body">
+                <div class="ws-label">Hidden Belief</div>
+                <div class="ws-desc">Uncover what might be holding you back.</div>
+                <div class="ws-quote">"If I can't do this perfectly, I'm inadequate."</div>
+              </div>
+            </div>
+            <div class="ws amber">
+              <div class="ws-num">3</div>
+              <div class="ws-body">
+                <div class="ws-label">Gentle Reframe</div>
+                <div class="ws-desc">A kinder, more realistic perspective.</div>
+                <div class="ws-quote">"I am enough, even when I'm still learning."</div>
+              </div>
+            </div>
+            <div class="ws rose">
+              <div class="ws-num">4</div>
+              <div class="ws-body">
+                <div class="ws-label">Next Step</div>
+                <div class="ws-desc">One small, kind step you can take.</div>
+                <div class="ws-quote">"Open the doc and write one sentence."</div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-footer">💚 Designed for moments when you're stuck.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section">
+  <div class="section-eyebrow">How it works</div>
+  <h2 class="section-h2">Four steps. About 60 seconds.</h2>
+  <p class="section-sub">FocusPal doesn't push you to work harder. It helps you understand why you're stuck — and meets you exactly where you are.</p>
+  <div class="steps-grid">
+    <div class="step-card c1" data-num="01">
+      <div class="step-icon">🔍</div>
+      <h3>Feel Seen</h3>
+      <p>A safe space to check in with what you feel. No judgment, no pressure.</p>
+    </div>
+    <div class="step-card c2" data-num="02">
+      <div class="step-icon">🧠</div>
+      <h3>Understand</h3>
+      <p>Uncover hidden beliefs behind stress, procrastination, and self-doubt.</p>
+    </div>
+    <div class="step-card c3" data-num="03">
+      <div class="step-icon">🌱</div>
+      <h3>Reframe</h3>
+      <p>Challenge limiting patterns and see new possibilities with self-compassion.</p>
+    </div>
+    <div class="step-card c4" data-num="04">
+      <div class="step-icon">✦</div>
+      <h3>Move Forward</h3>
+      <p>Take one small step with kindness and confidence — not pressure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- THERAPIES -->
+<div class="therapies-bg">
+  <div class="therapies-inner">
+    <div class="section-eyebrow">Evidence-informed approaches</div>
+    <h2 class="section-h2">Matched to your feeling.</h2>
+    <p class="section-sub">Different emotions need different tools. FocusPal routes you to the right approach — automatically.</p>
+    <div class="therapies-grid">
+      <div class="therapy-card t1">
+        <div class="therapy-emoji">👁️</div>
+        <div>
+          <span class="tag">Anxious / Fearful</span>
+          <h3>ACT · Cognitive Defusion</h3>
+          <p>Separate yourself from anxious thoughts. You are not the fear — you are the one noticing it.</p>
+        </div>
+      </div>
+      <div class="therapy-card t2">
+        <div class="therapy-emoji">🌺</div>
+        <div>
+          <span class="tag">Guilty / Self-Blaming</span>
+          <h3>Ho'oponopono · Zero Limits</h3>
+          <p>A Hawaiian forgiveness practice. Release self-blame and return to a place of peace.</p>
+        </div>
+      </div>
+      <div class="therapy-card t3">
+        <div class="therapy-emoji">🫂</div>
+        <div>
+          <span class="tag">Overwhelmed / Stressed</span>
+          <h3>Self-Compassion · Kristin Neff</h3>
+          <p>Acknowledge the pain, recognise shared humanity, and offer yourself kindness.</p>
+        </div>
+      </div>
+      <div class="therapy-card t4">
+        <div class="therapy-emoji">🍃</div>
+        <div>
+          <span class="tag">Frustrated / Resistant</span>
+          <h3>Zen Mindfulness</h3>
+          <p>Observe resistance without judgment. Let the energy move through you rather than against you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH -->
+<div class="research-strip">
+  <h2>Built for real student life.</h2>
+  <p>FocusPal is an academic research prototype studying emotional micro-interventions and procrastination in students. Your anonymous data helps us understand what actually works.</p>
+  <div class="research-pills">
+    <span class="pill">ACT Therapy</span>
+    <span class="pill">Self-Compassion Research</span>
+    <span class="pill">Ho'oponopono</span>
+    <span class="pill">Zen Mindfulness</span>
+    <span class="pill">Anonymous Data Only</span>
+  </div>
+</div>
+
+<!-- PRIVACY -->
+<section class="privacy-section">
+  <div>
+    <h2>Your reflections stay with you.</h2>
+    <p>FocusPal is built with privacy at the core. We collect the minimum possible — and we're transparent about all of it.</p>
+    <div class="privacy-checks">
+      <div class="check-item">No personal information collected — ever</div>
+      <div class="check-item">Session data stored locally on your device</div>
+      <div class="check-item">Only anonymous, aggregated data sent for research</div>
+      <div class="check-item">No ads. No selling your data. No accounts required.</div>
+      <div class="check-item">Open source — read every line of code on GitHub</div>
+    </div>
+  </div>
+  <div class="privacy-visual">
+    <div class="big-icon">🔒</div>
+    <p>Private &amp; Secure<br>Your reflections stay on your device.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to understand<br>what's really going on?</h2>
+  <p>Free. Private. Takes 60 seconds. No account needed.</p>
+  <a href="https://chromewebstore.google.com" class="btn-white" target="_blank">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><path d="M12 7a5 5 0 100 10A5 5 0 0012 7z" fill="currentColor"/></svg>
+    Add FocusPal to Chrome — Free
+  </a>
+  <p class="cta-note">Works on Chrome · No sign-up required · Built for students</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 FocusPal · Emotional Insight</div>
+  <div class="footer-links">
+    <a href="https://yingkaideng.github.io/focuspal-privacy/" target="_blank">Privacy Policy</a>
+    <a href="mailto:yingkai.deng8@gmail.com">Contact</a>
+    <a href="https://github.com/yingkaideng" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
